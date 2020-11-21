@@ -290,6 +290,7 @@ if ($last_order_id == null) {
                       echo '<hr >';
                       $index->cardSaved = true;
                       $vendorOwnerIdSessionIds = $index->getSessionIdUsers();
+                      if(count($vendorOwnerIdSessionIds)){
           ?>
                       <script>
                         
@@ -328,7 +329,10 @@ if ($last_order_id == null) {
                         // console.log('complete object:' + completeObject);
                       </script>
         <?php
-                    }
+                  }else{
+                    echo '<h3>اطلاعات شما به هیچ فروشگاهی ارسال نشد.</h3>';
+                  }
+                }
                     ///////////////////////////////////////
                   }
                 } else {

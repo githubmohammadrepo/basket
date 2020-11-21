@@ -42,8 +42,7 @@ class SendTo20Store
                 }
             } else {
                 $statusComplete = false;
-                throw new Exception("error accured when get order_product infos");
-                
+                                
             }
         } catch (exception $e) {
             //code to handle the exception

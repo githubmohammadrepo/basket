@@ -1,11 +1,13 @@
 <?php
 require_once("connection.php");
 
-class GetJchatSessionIdsByVendorOwnerIds {
+class GetJchatSessionIdsByVendorOwnerIds
+{
   private $conn;
   private $vendorOwnerIds;
+  public $result;
   public $error;
-  
+
   public function __construct($conn)
   {
     $this->conn = $conn;
@@ -14,7 +16,8 @@ class GetJchatSessionIdsByVendorOwnerIds {
   /**
    * set vendorOwner ids 
    */
-  public function setVendorOwnerIds($vendorOwnerIds){
+  public function setVendorOwnerIds($vendorOwnerIds)
+  {
     $this->vendorOwnerIds = $vendorOwnerIds;
   }
 
@@ -30,37 +33,35 @@ class GetJchatSessionIdsByVendorOwnerIds {
     try {
       // run your code here
 
-     $this->error =  $sql = "SELECT * from pish_session" .
+      $this->error =  $sql = "SELECT session_id,userid from pish_session" .
         " WHERE userid IN (" . implode(",", $this->vendorOwnerIds) . ")" .
         " GROUP by userid" .
         " ORDER BY time DESC;";
       $result = $this->conn->query($sql);
       if ($result) {
-       $rowcount=mysqli_num_rows($result);
-        if($rowcount>0){
-            $dev_array= Array();
-            for ($i = 0; $i < $result->num_rows; $i++)
-            {
-                $row = $result->fetch_assoc();
-                $dev_array[$i] = $row;
-            }
+        $rowcount = $result->num_rows;
+        if ($rowcount > 0) {
+          $dev_array = array();
+          for ($i = 0; $i < $result->num_rows; $i++) {
+            $row = $result->fetch_assoc();
+            $dev_array[$i] = $row;
+          }
 
-          return $dev_array;
-        }else{
+          $this->result = $dev_array;
+          return true;
+        } else {
           $statusComplete = false;
         }
       } else {
         $statusComplete = false;
-        throw new Exception("error accured when insert vendor ids");
+        return false;
       }
     } catch (exception $e) {
       //code to handle the exception
-      return $e->getMessage();
+      return false;
     }
     return $statusComplete;
   }
-
-
 }
 
 /**
@@ -71,12 +72,27 @@ class GetJchatSessionIdsByVendorOwnerIds {
 $json = file_get_contents('php://input');
 $post = json_decode($json, true);
 
-$vendorOwnerIds = $post['vedorOwnerIds'];
+if ($post && count($post)) {
 
-//create init from class
-$init =  new GetJchatSessionIdsByVendorOwnerIds($conn);
+  $vendorOwnerIds = $post['vedorOwnerIds'];
+  if(count($vendorOwnerIds)){
 
-$init->setVendorOwnerIds($vendorOwnerIds);
+    //create init from class
+    $init =  new GetJchatSessionIdsByVendorOwnerIds($conn);
+    
+    $init->setVendorOwnerIds($vendorOwnerIds);
+    
+    $result = $init->getVendorOwnerIds();
+    if($result){
+      echo json_encode($init->result);
+    }else{
+      echo json_encode([]);
+    }
 
-$result = $init->getVendorOwnerIds();
-echo json_encode($result);
+  }else{
+    echo json_encode([]);
+  }
+
+} else {
+  echo json_encode([]);
+}
