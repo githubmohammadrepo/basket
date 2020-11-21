@@ -46,13 +46,13 @@ class Index
       $error_msg = curl_error($ch);
       $this->error = true;
       curl_close($ch);
-      return;
+      return true;
     }
     curl_close($ch);
     // echo $result;
+    $status = true;
     $userLocationResult = (json_decode($result, true));
     foreach ($userLocationResult as $key => $value) {
-      $status = true;
       if (isset($value['status']) && $value['status'] == 0) {
         //error userlocation does not found
         $status  = false;
@@ -237,16 +237,18 @@ if ($last_order_id == null) {
       $index->cardSaved = false;
       $index->foundStore = 0;
       //  if (isset($_POST) && isset($_POST["lat"]) && isset($_POST["lng"])) {
-      if ($user_id) {
+      if ($user_id['user_id']) {
 ?>
         <!-- show html codes -->
         <!DOCTYPE html>
         <html lang="en">
+
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Document</title>
         </head>
+
         <body>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
           <!-- end show html codes -->
