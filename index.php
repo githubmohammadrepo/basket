@@ -280,11 +280,11 @@ if ($last_order_id == null) {
                   //set order_id to session
                   if ($index->error) {
                     //error curl get correct data
-                    echo '<h3>error => cant find any user</h3>';
+                    echo '<h3>error => cant find any user information from server</h3>';
                   } else {
                     //curl get data successfull
                     if ($contents[0]->response == 'notok') {
-                      echo " <h2>محصولات شما قبلا به فروشگاه های نزدیک فرستاده شده است.</h2>";
+                      echo " <h3>محصولات شما قبلا به فروشگاه های نزدیک فرستاده شده است.</h3>";
                       //show error
                     } else {
                       echo '<hr >';
@@ -292,19 +292,7 @@ if ($last_order_id == null) {
                       $vendorOwnerIdSessionIds = $index->getSessionIdUsers();
           ?>
                       <script>
-                        function display() {
-                          var today = new Date();
-                          var month = today.getMonth();
-                          var day = today.getDay();
-                          var year = today.getFullYear();
-                          var hour = today.getHours() > 12 ? today.getHours() - 12 : today.getHours();
-                          var minute = today.getMinutes();
-                          var seconds = today.getSeconds();
-                          var milliseconds = today.getMilliseconds();
-                          var output = month + '/' + day + '/' + year + ' - ' +
-                            hour + ':' + minute + ':' + seconds + ':' + milliseconds;
-                          document.write(output);
-                        }
+                        
                         //setInterval(display, 6000);
                         let jsonLiveSite = "http://hypertester.ir/ndex.php?option=com_jchat&format=json"
                         var postObject;

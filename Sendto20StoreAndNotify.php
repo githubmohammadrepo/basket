@@ -27,7 +27,7 @@ class SendTo20Store
         $this->conn = $conn;
 
         // set hikashop user_id
-        $this->getHikashopUserId($user_id);
+        
         //get order infos
     }
     /**
@@ -39,7 +39,7 @@ class SendTo20Store
         
         try {
             // run your code here
-        $sql = "SELECT `user_id` FROM pish_hikashop_user WHERE user_cms_id=$user_id LIMIT 1";
+            $sql = "SELECT `user_id` FROM pish_hikashop_user WHERE user_cms_id=$user_id LIMIT 1";
             
             $result = $this->conn->query($sql);
             if ($result) {
@@ -48,18 +48,18 @@ class SendTo20Store
                     
                     $row = $result->fetch_assoc();
                     $this->hika_user_id = $row['user_id'];
+                    $statusComplete = true;
 
                 } else {
                     $statusComplete = false;
                 }
             } else {
                 $statusComplete = false;
-                throw new Exception("error accured when get order_product infos");
                 
             }
         } catch (exception $e) {
             //code to handle the exception
-            return $e->getMessage();
+            return false;
         }
         return $statusComplete;
     }
@@ -87,7 +87,7 @@ class SendTo20Store
         $statusComplete = false;
         try {
             // run your code here
-            $this->row =$sql = "SELECT * FROM `pish_hikashop_order_product`".
+            $sql = "SELECT * FROM `pish_hikashop_order_product`".
             " WHERE `order_id` = ".$this->last_id.";"; //have error
             
             
@@ -119,12 +119,12 @@ class SendTo20Store
                 }
             } else {
                 $statusComplete = false;
-                throw new Exception("error accured when get order_product infos");
+                return false;
                 
             }
         } catch (exception $e) {
             //code to handle the exception
-            return $e->getMessage();
+            return false;
         }
         return $statusComplete;
     }
@@ -175,13 +175,13 @@ class SendTo20Store
                     $statusComplete =true;
                 }else{
                     $statusComplete = false;
-                    throw new Exception("error accured when insert vendor ids");
+                    break;
                 }
 
             }
         } catch (exception $e) {
             //code to handle the exception
-            $this->row = $e->getMessage();
+            return false;
         }
         return $statusComplete;
     }
@@ -203,8 +203,7 @@ class SendTo20Store
             // $this->last_id = $rows['order_id'];
             $this->orderTableInfo = $row;
             $this->last_id = $row['order_id'];
-            
-            $this->error = $row;
+
             return true;
         } else {
             $this->last_id = -1;
@@ -323,7 +322,7 @@ if($post && count($post)){
     $user_id = $post["user_id"];
     $orders = $post["orders"];
     $message='';
-    if($user_id && $orders){
+    if($user_id && $orders && count($orders)){
 
         try {
             // throw new Exception("Some error message");
@@ -331,30 +330,33 @@ if($post && count($post)){
             if ($user_id) {
                 $sendStore = new SendTo20Store($conn, $orders, $user_id);
                 
-                
-                // step 1 => get order by user_id
-                if($sendStore->getLastOrderTableId()){
-                    // $object->response = $sendStore->row->order_id;
+                if($sendStore->getHikashopUserId($user_id)){
                     
-                    // step 2 => insert order data into pish_customer_vendor with default status undone
-                    if($sendStore->insertCustomerVendorTable()){
-                        //$object->response = 'vendor id saved complete';
+                    // step 1 => get order by user_id
+                    if($sendStore->getLastOrderTableId()){
+                        // $object->response = $sendStore->row->order_id;
                         
-                        if($sendStore->getAllOrderProductTable()){
-                            $object->response = 'ok';
+                        // step 2 => insert order data into pish_customer_vendor with default status undone
+                        if($sendStore->insertCustomerVendorTable()){
+                            //$object->response = 'vendor id saved complete';
                             
-                            $message = $sendStore->messageProducts;
-                            $object->response = 'ok';
+                            if($sendStore->getAllOrderProductTable()){
+                                $object->response = 'ok';
+                                
+                                $message = $sendStore->messageProducts;
+                                
+                            }else{
+                                $object->response = 'notok';
+                            }
+
                             
                         }else{
                             $object->response = 'notok';
                         }
 
-                        
                     }else{
                         $object->response = 'notok';
                     }
-
                 }else{
                     $object->response = 'notok';
                 }
