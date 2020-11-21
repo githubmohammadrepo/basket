@@ -13,6 +13,7 @@ if($post && count($post)){
 
     $lat = $post["lat"];
     $lng = $post["lng"];
+    if($lat && $lng) {
 
     //mohammad ravnad
     //ichange this sql --> this line (HAVING distance < 1 and user_id is not null)
@@ -51,6 +52,9 @@ if($post && count($post)){
 }else{
     failResponse();
 }
+}else{
+    failResponse();
+}
 
 
 /**
@@ -65,4 +69,3 @@ function failResponse(){
 
     echo $jsonEncode;
 }
-?>

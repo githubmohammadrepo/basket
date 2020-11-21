@@ -242,13 +242,11 @@ if ($last_order_id == null) {
         <!-- show html codes -->
         <!DOCTYPE html>
         <html lang="en">
-
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Document</title>
         </head>
-
         <body>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
           <!-- end show html codes -->
@@ -365,6 +363,7 @@ if ($last_order_id == null) {
             <p>سبد خرید با موفقیت برای فروشگاه های نزدیک شما ارسال شد. </p>
           </div>
         <?php
+$session->set('last_order_id', $last_order_id['response']);
           //header( "refresh:15;url=http://hypertester.ir/" );
         }
         if (true) {
@@ -388,7 +387,6 @@ if ($last_order_id == null) {
           </div>
   <?php
         }
-        $session->set('last_order_id', $last_order_id['response']);
       }
     }
   }
