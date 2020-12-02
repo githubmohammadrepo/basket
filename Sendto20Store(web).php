@@ -169,7 +169,7 @@ class SendTo20Store
             // run your code here
             foreach ($this->vendor_id as $key => $VID) {
 
-                $this->row = $sqlSellOrderType = "INSERT INTO `pish_customer_vendor`  (`customer_id`, `vendor_id` ) VALUES ($this->hika_user_id," . $VID['id'] . ")";
+                $this->row = $sqlSellOrderType = "INSERT INTO `pish_customer_vendor`  (`customer_id`, `vendor_id`,`order_id` ) VALUES ($this->hika_user_id," . $VID['id'] .",".$this->last_id. ")";
                 $result = $this->conn->query($sqlSellOrderType);
                 if($result){
                     $statusComplete =true;
