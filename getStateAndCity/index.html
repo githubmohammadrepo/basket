@@ -1,0 +1,101 @@
+<script type="text/javascript" defer>
+    //accept all product in one order
+    function getAllStates() {
+
+        var data = {
+                typeGetData: "getAllState"
+            }
+            // sent ajax request
+        jQuery.ajax({
+            url: "http://hypertester.ir/serverHypernetShowUnion/getPlaceLocation.php",
+            method: "POST",
+            data: JSON.stringify(data),
+            dataType: "json",
+            contentType: "application/json",
+            success: function(data) {
+                if (data[0].response == 'ok') {
+
+                    let select = document.querySelector('#CarManufacturer');
+                    let option;
+                    let text;
+                    data[0].data.forEach(element => {
+                        option = document.createElement('option');
+                        option.id = element.id
+                        option.setAttribute('value', element.id)
+                        text = document.createTextNode(element.name)
+                        option.appendChild(text)
+
+                        select.appendChild(option)
+                    });
+                } else if (data[0] == 'notok') {} else {}
+            },
+            error: function(xhr) {
+                console.log('error', xhr);
+            }
+
+        })
+
+
+    }
+
+
+    // loiad data when page is loaded
+    getAllStates();
+    getAllCities();
+
+    function dynamic1(parent, event) {
+        console.log(event.target.value)
+        let pselect = document.querySelector('#CarModel');
+        removeOptions(pselect);
+        getAllCities(event.target.value);
+    }
+    // get allcities by state id
+    function getAllCities(state_id) {
+        var data = {
+                typeGetData: "getAllCity",
+                state_id: state_id
+            }
+            // sent ajax request
+        jQuery.ajax({
+            url: "http://hypertester.ir/serverHypernetShowUnion/getPlaceLocation.php",
+            method: "POST",
+            data: JSON.stringify(data),
+            dataType: "json",
+            contentType: "application/json",
+            success: function(data) {
+                console.log(data)
+                if (data[0].response == 'ok') {
+                    let select = document.querySelector('#CarModel');
+
+                    let option;
+                    let text;
+                    data[0].data.forEach(element => {
+                        option = document.createElement('option');
+                        option.id = element.id
+                        option.value = element.id;
+                        text = document.createTextNode(element.name)
+                        option.appendChild(text)
+
+                        select.appendChild(option)
+                    });
+
+                } else if (data[0] == 'notok') {} else {}
+            },
+            error: function(xhr) {
+                console.log('error', xhr);
+            }
+
+        })
+
+
+    }
+
+
+    // loiad data when page is loaded
+    function removeOptions(selectElement) {
+        var i, L = selectElement.options.length - 1;
+        for (i = L; i >= 0; i--) {
+            selectElement.remove(i);
+        }
+    }
+</script>
