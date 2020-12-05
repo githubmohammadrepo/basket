@@ -60,6 +60,8 @@ class Index
       } else {
         $this->post['lat'] = $value['latitude'];
         $this->post['lng'] = $value['longitude'];
+        $this->post['city'] = $value['city'];
+        $this->post['province'] = $value['province'];
       }
     }
     return $status;

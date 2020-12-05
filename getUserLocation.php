@@ -51,7 +51,7 @@ class getUserLocation
   // set user id to sql
   private function setUserIdInSql()
   {
-    $this->sql = "SELECT `user_id`,`latitude`,`longitude` FROM `pish_phocamaps_marker_customer` " .
+    $this->sql = "SELECT `user_id`,`latitude`,`longitude`,`city`,`province` FROM `pish_phocamaps_marker_customer` " .
       " WHERE user_id =" . $this->user_id .  ";";
   }
 }
