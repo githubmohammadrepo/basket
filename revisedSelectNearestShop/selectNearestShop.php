@@ -52,7 +52,8 @@ class SelectNearestShop extends Response
   private $unRegesteredStoreList = Array();
   public $cityId;
   public $provinceId;
-
+  private $countRegesteredStore = 40;
+  private $filterRegesteredStoreCount = 20;
   private $lat;
   private $lng;
 
@@ -73,7 +74,7 @@ class SelectNearestShop extends Response
   //get all nearest shop that was regestered
   public function getAllRegesteredStores()
   {
-    $sql = "(SELECT id,user_id, ( 6371* acos(cos(radians(29.807903289794923)) * cos(radians(latitude)) * cos(radians(longitude) - radians(52.48660659790040)) + sin(radians(29.807903289794923)) * sin(radians(latitude))) ) AS distance FROM pish_phocamaps_marker_store WHERE user_id is not null AND user_id REGEXP '^[0-9]' AND city = $this->cityId AND province = $this->provinceId ORDER BY distance LIMIT 0, 40 )";
+    $sql = "(SELECT id,user_id, ( 6371* acos(cos(radians($this->lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians($this->lng)) + sin(radians($this->lat)) * sin(radians(latitude))) ) AS distance FROM pish_phocamaps_marker_store WHERE user_id is not null AND user_id REGEXP '^[0-9]' AND city = $this->cityId AND province = $this->provinceId ORDER BY distance LIMIT 0, $this->countRegesteredStore )";
     $result = $this->conn->query($sql);
     
     $this->regesteredStoreCount = $result->num_rows;
@@ -92,7 +93,7 @@ class SelectNearestShop extends Response
   public function validateRegesteredStores()
   {
     if ($this->getAllRegesteredStores()) {
-      if ($this->regesteredStoreCount >= 20) {
+      if ($this->regesteredStoreCount >= $this->filterRegesteredStoreCount) {
         //continue complete order
         return true;
       } else {
@@ -107,12 +108,15 @@ class SelectNearestShop extends Response
 
   //send sms to 1000 store owner that live in same city and province(state)
   private function sendSmsToUnregesteredStores(){
+      
     //get 1000 store owner mobile phone
-    $this->smsCount = 40;
+    $this->smsCount = 2;
     if($this->getAllUnRegesteredStores($this->smsCount)){
+      
       foreach ($this->unRegesteredStoreList as $key => $row) {
         $message ='فروشگاه عزیز لطفا  ثبت نام بکنید';
-        $mobile = $row['MobilePhone'];
+        print_r($row);
+       echo $mobile = $row['MobilePhone'];
         
         //solve problem with phone number
         if(strlen($mobile)==10 && $mobile[0]!=0){
@@ -123,6 +127,7 @@ class SelectNearestShop extends Response
         // if phone number is correct
         if(strlen($mobile)==11){
           //phone number is correct and sent sms
+          echo 'eleven';
           if($this->sendOneSms($mobile,$message)){
             $this->successSms++;
           }else{
@@ -143,7 +148,7 @@ class SelectNearestShop extends Response
    */
   public function getAllUnRegesteredStores($resultCount=40)
   {
-    $sql = "(SELECT id,user_id, ( 6371* acos(cos(radians(29.807903289794923)) * cos(radians(latitude)) * cos(radians(longitude) - radians(52.48660659790040)) + sin(radians(29.807903289794923)) * sin(radians(latitude))) ) AS distance FROM pish_phocamaps_marker_store WHERE user_id is null AND city = $this->cityId AND province = $this->provinceId ORDER BY distance LIMIT 0, 40 )";
+    $sql = "(SELECT id,user_id,MobilePhone, ( 6371* acos(cos(radians($this->lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians($this->lng)) + sin(radians($this->lat)) * sin(radians(latitude))) ) AS distance FROM pish_phocamaps_marker_store WHERE user_id is null AND city = $this->cityId AND province = $this->provinceId ORDER BY distance LIMIT 0, $resultCount )";
     $result = $this->conn->query($sql);
     $this->unRegesteredStoreCount = $result->num_rows;
     if ($this->unRegesteredStoreCount > 0) {

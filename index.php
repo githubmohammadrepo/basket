@@ -275,7 +275,7 @@ if ($last_order_id == null) {
               $card = $index->selectNearestShop();
               if ($index->error) {
                 //fail select nearest 20 shops
-                echo '<h3>Error => nearer store is not found</h3>';
+                echo '<h3>Error => فروشگاه نزدیکی پیدا نشد،..</h3>';
               } else {
                 //get nearest shop is successful
                 if ($card && count($card)) {
